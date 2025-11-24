@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts'
-import { DollarSign, ShoppingBag, Calendar, TrendingUp, MapPin, Upload, Trash2 } from 'lucide-react'
+import { DollarSign, ShoppingBag, Calendar, TrendingUp, MapPin, Upload, Trash2, HelpCircle, X } from 'lucide-react'
 import { format, parseISO, subYears, isWithinInterval } from 'date-fns'
 
 const defaultCostcoData = []
@@ -18,6 +18,7 @@ function App() {
     start: format(subYears(new Date(), 1), 'yyyy-MM-dd'),
     end: format(new Date(), 'yyyy-MM-dd')
   })
+  const [showHelp, setShowHelp] = useState(false)
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0]
@@ -149,7 +150,7 @@ function App() {
           <div className="date-range-selector" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <label className="upload-btn" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
               <Upload size={18} />
-              Upload Data
+              Load Data
               <input
                 type="file"
                 accept=".json"
@@ -157,6 +158,9 @@ function App() {
                 style={{ display: 'none' }}
               />
             </label>
+            <button onClick={() => setShowHelp(true)} className="icon-btn" title="How to get data">
+              <HelpCircle size={18} />
+            </button>
             <button onClick={handleClearData} className="clear-btn" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
               <Trash2 size={18} />
               Clear Data
@@ -414,6 +418,25 @@ function App() {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {showHelp && (
+        <div className="modal-overlay" onClick={() => setShowHelp(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>How to get your data</h2>
+              <button onClick={() => setShowHelp(false)} className="icon-btn"><X size={24} /></button>
+            </div>
+            <div className="modal-body">
+              <ol>
+                <li>Download your Costco purchase history from Costco's website, follow instructions <a href="https://github.com/ankurdave/beancount_import_sources/blob/main/download/download_costco_receipts.js" target="_blank" rel="noreferrer">here</a>. If you are not in the US you should go to <code>https://www.costco.&#123;your country tld&#125;/OrderStatusCmd</code></li>
+                <li>Load the file to this app. All data will be stored in your browser, there is no server.</li>
+                <li>Select the date range you want to view.</li>
+                <li>Explore the visualizations and insights.</li>
+              </ol>
+            </div>
+          </div>
         </div>
       )}
     </div>
